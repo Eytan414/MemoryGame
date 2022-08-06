@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Card } from './card';
+import utilsService from "./utils.ts"
 
 interface GridProps {
     size: number,
@@ -9,7 +9,6 @@ interface GridProps {
 const generateGameData = (size: number):Card[] =>{
     const cards = Array<Card>();
     const randomSet = new Set<number>();
-
     for(let i=0; i<size/2; i++){
         let match:number;
         let index = calcNextIndex(randomSet);
@@ -40,16 +39,28 @@ const generateGameData = (size: number):Card[] =>{
 
 const calcNextIndex = (set:Set<number>):number=>{
     if(set.size === 0) return 0;
-
-    for(let i=0; i<set.size; i++)//find lowest unoccupied slot
+    let lastIndex:number;
+    for(let i=0; i<set.size; i++){//find lowest unoccupied slot
+        lastIndex = i;
         if(!set.has(i))
-            return i;
+            return i;   
+    }
+    return lastIndex+1;
 }
 
 export const Grid = (props: GridProps) => {
-    const cards = generateGameData(props.size);
+    let cards = generateGameData(props.size);
+    utilsService.shuffle(cards);
+
     return (
-        <View style={{...styles.gridContainer}}>
+        <View style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            width: '50%',
+            height: '100%',
+            margin: 10
+        }}>
             {
                 cards.map((card, index)=>{
                     return <Card key={index} index={card.index} match={card.match} text={card.text}/>
@@ -64,6 +75,6 @@ const styles = StyleSheet.create({
     gridContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        // marginTop: 100,
+        marginTop: 50,
     }
 })

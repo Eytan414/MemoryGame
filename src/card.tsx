@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, Dimensions, GestureResponderEvent } from 'react-native';
 
 interface CardProps {
     match: number,
@@ -9,20 +9,37 @@ interface CardProps {
 
 export const Card = (props: CardProps) => {
     const [backgroundColor, setBackgroundColor] = useState('red') 
-    const [text, setText] = useState('') ;
+    const [text] = useState(props.text);
+    const [opacity, setOpacity] = useState(0);
+    let dims = Dimensions.get('screen');
+    let squareSize = dims.width/12;
 
-    const cardOnClick = () => {
+    const cardOnClick = ($event:GestureResponderEvent) => {
         setBackgroundColor(backgroundColor === 'red' ? 'blue' : 'red');
-        setText(text === '' ? props.text : '');
+        setOpacity(opacity === 0 ? 1 : 0);
     }
     return (
-        <View style={{...styles.cardContainer, backgroundColor: backgroundColor}}>
-            <TouchableOpacity style={styles.textContainer} onPress={cardOnClick}>
-                <Text style={{color: 'white'}}>
-                    {text}
-                </Text>
-            </TouchableOpacity>           
-        </View>
+        <TouchableOpacity onPress={cardOnClick} style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: squareSize,
+            height: squareSize,
+            margin: 16,
+            flexBasis: '33%',
+            backgroundColor: backgroundColor
+        }}>
+            <Text style={{
+                opacity:opacity,
+                alignItems: 'center',
+                padding: 10,
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: 20, //TODO: responsive size
+
+            }}>
+                {text}
+            </Text>           
+        </TouchableOpacity>
     )
 }
 
@@ -31,7 +48,8 @@ const styles = StyleSheet.create({
     cardContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '1%'    
+        margin: '1%',
+        padding: 10
     },
     textContainer: {
         alignItems: 'center',
