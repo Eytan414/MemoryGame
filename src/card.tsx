@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, Dimensions, GestureResponderEvent } from 'react-native';
+import { StyleSheet, Text, Dimensions, Pressable } from 'react-native';
 
 interface CardProps {
     match: number,
@@ -14,20 +14,26 @@ export const Card = (props: CardProps) => {
     let dims = Dimensions.get('screen');
     let squareSize = dims.width/12;
 
-    const cardOnClick = ($event:GestureResponderEvent) => {
+    const cardOnClick = () => {
         setBackgroundColor(backgroundColor === 'red' ? 'blue' : 'red');
         setOpacity(opacity === 0 ? 1 : 0);
+        let pressedElement:HTMLElement = event.target as HTMLElement;
+        let index = Array.from(pressedElement.parentElement.children).indexOf(pressedElement);
+        //TODO: add ref to cards arr
+        //TODO: check if cards match and disable them, else flip both back  
+        //TODO: check win condition  
     }
     return (
-        <TouchableOpacity onPress={cardOnClick} style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxWidth: squareSize,
-            height: squareSize,
-            margin: 16,
-            flexBasis: '33%',
-            backgroundColor: backgroundColor
-        }}>
+        <Pressable onPress={cardOnClick} 
+            style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxWidth: squareSize,
+                height: squareSize,
+                margin: 16,
+                flexBasis: '33%',
+                backgroundColor: backgroundColor
+            }}>
             <Text style={{
                 opacity:opacity,
                 alignItems: 'center',
@@ -39,7 +45,7 @@ export const Card = (props: CardProps) => {
             }}>
                 {text}
             </Text>           
-        </TouchableOpacity>
+        </Pressable>
     )
 }
 
