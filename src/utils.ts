@@ -4,7 +4,7 @@ const utilsService =
     let currentIndex:number = array.length;
     let randomIndex:number;
     
-    while (currentIndex != 0) {
+    while (currentIndex !== 0) {
       // Pick a remaining element
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
