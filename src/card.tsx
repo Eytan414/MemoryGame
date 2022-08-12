@@ -1,17 +1,18 @@
-import { useContext } from 'react';
-import { Text, Dimensions, Pressable, View } from 'react-native';
+import React, { useContext } from 'react';
+import { Image, Text, Dimensions, Pressable, View } from 'react-native';
 import { GridContext } from './grid';
 
 interface CardProps {
     index: number,
-    onPress(pressed: number): void;
+    onPress(pressed: number): void,
 }
 
-export const Card = (props: CardProps) => {
-    let dims = Dimensions.get('screen');
-    let colSize = dims.width * dims.scale / 12;
-    const cardsContext = useContext(GridContext);
+export const CardComponent = (props: CardProps) => {
+    let dims = Dimensions.get('screen')
+    let colSize = dims.width * dims.scale / 12
+    const cardsContext = useContext(GridContext)
     const card = cardsContext.filter((card) => {return card.index === props.index})[0]
+
     return (
         <Pressable disabled={card.disabled}
             key={props.index}
@@ -25,19 +26,19 @@ export const Card = (props: CardProps) => {
                     opacity: card.disabled ? .5 : 1,
                     width: colSize,
                     height: colSize,
-                    
+                    backgroundColor: card.revealed ? 'whitesmoke' : 'red',
                 }}>
-                    <Text style={{
-                        backgroundColor: card.revealed ? 'blue' : 'red',
-                        color: 'white',
-                        fontSize: 20,
-                        width: "100%",
-                        height: "100%",
-                        textAlign: 'center'
-                    }}>
-                        {card.revealed ? card.text : ''}
-                    </Text>
-                </View>
+                {
+                    <Image
+                        source={card.imageUrl}       
+                        style={{
+                            display: card.revealed ? 'flex' : 'none',
+                            height: '100%',
+                            width:'100%'
+                        }}
+                    />
+                }
+            </View>
         </Pressable>
     )
 }

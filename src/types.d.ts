@@ -1,7 +1,7 @@
-interface Card{
+export interface Card{
     match: number,
     index: number,
-    text: string,
+    imageUrl: any,
     revealed: boolean,
     disabled: boolean,
 }

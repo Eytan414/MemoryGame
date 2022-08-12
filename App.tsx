@@ -1,4 +1,5 @@
-import { View } from 'react-native';
+import React from 'react';
+import { View, Image } from 'react-native';
 import { Grid } from './src/grid';
 
 export default function App() {
@@ -10,7 +11,7 @@ export default function App() {
       width: '100%',
       height: '100%',
     }}>
-      <Grid size={12}/>
+      <Grid size={16}/>
     </View>
-  );
+  )
 }
