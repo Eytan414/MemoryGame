@@ -1,37 +1,43 @@
-import { useContext, useState } from 'react';
-import { StyleSheet, Text, Dimensions, Pressable } from 'react-native';
+import { useContext } from 'react';
+import { Text, Dimensions, Pressable, View } from 'react-native';
 import { GridContext } from './grid';
 
 interface CardProps {
     index: number,
-    // match: number,
     onPress(pressed: number): void;
 }
 
 export const Card = (props: CardProps) => {
     let dims = Dimensions.get('screen');
-    let squareSize = dims.width / 12;
-    const cards = useContext(GridContext);
-
+    let colSize = dims.width * dims.scale / 12;
+    const cardsContext = useContext(GridContext);
+    const card = cardsContext.filter((card) => {return card.index === props.index})[0]
     return (
-
-        <Pressable disabled={cards[props.index].disabled}
+        <Pressable disabled={card.disabled}
             key={props.index}
             onPress={() => { props.onPress(props.index) }}
             style={{
-                margin: 16,
-                opacity: cards[props.index].disabled ? .5 : 1,
+                flexBasis: '25%',
+                alignItems: 'center',
                 padding: 20,
             }}>
-            <Text style={{
-                backgroundColor: cards[props.index].revealed ? 'blue' : 'red',
-                color: 'white',
-                fontSize: 20,
-                width: squareSize,
-                height: squareSize,
-            }}>
-                {cards[props.index].revealed ? cards[props.index].text : ''}
-            </Text>
+                <View style={{
+                    opacity: card.disabled ? .5 : 1,
+                    width: colSize,
+                    height: colSize,
+                    
+                }}>
+                    <Text style={{
+                        backgroundColor: card.revealed ? 'blue' : 'red',
+                        color: 'white',
+                        fontSize: 20,
+                        width: "100%",
+                        height: "100%",
+                        textAlign: 'center'
+                    }}>
+                        {card.revealed ? card.text : ''}
+                    </Text>
+                </View>
         </Pressable>
     )
 }
