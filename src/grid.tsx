@@ -31,6 +31,7 @@ const showAlert = (msg:string, duration:number) => {
         color: blue;
         font-weight: bold;
         display: flex;
+        text-align: center;
         align-items: center;
         justify-content: center;`);
      alt.innerHTML = msg;
@@ -136,7 +137,7 @@ export const Grid = (props: GridProps) => {
         resetRevealedCards()
     }
     const handleWin = ():void => {
-        showAlert(`Woo Hoo! finished in ${moves} moves`, 332333)
+        showAlert(`Woo Hoo! finished in ${moves} moves`, 3333)
 
         playSound(SoundTypes.WIN)
     }
