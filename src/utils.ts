@@ -1,5 +1,10 @@
 import { Card } from './types.d';
+import {Alert} from 'react-native'
 
+export enum SoundTypes {
+  WIN,
+}
+const IMAGE_COUNT:number = 24
 const utilsService = 
 {
   shuffle: (array: Card[]):void => {
@@ -15,13 +20,14 @@ const utilsService =
         [array[randomIndex], array[currentIndex]]
     }
   },
-  loadImages: (size: number) => {
-    const imgArr = {};
-    for (let i = 0; i<size; i++) {
-      imgArr[i] = require(`../assets/cardfaces/${i}.svg`) as string
+  loadImages: () => {
+    const imagesObj = {}
+    for (let i = 0; i<IMAGE_COUNT; i++) {
+      imagesObj[i] = require(`../assets/images/cardfaces/${i}.svg`) as string
     }
-    return imgArr
+    return imagesObj
   }
 }
+
 
 export default utilsService

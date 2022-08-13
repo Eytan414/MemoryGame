@@ -1,18 +1,56 @@
 import React, { useMemo, useState} from 'react';
 import { View } from 'react-native';
 import { Card } from './types.d';
-import utilsService from "./utils";
+import utilsService, {SoundTypes} from "./utils";
 import {CardComponent} from "./card";
+import { Audio } from 'expo-av';
+
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
+
 interface GridProps {
     size: number,
 }
+// const showAlert = (title: string, message: string = '') => {
+//     Alert.alert(title, message, [
+//       { text: 'OK' },
+//   ]);
+// }
 
+//TODO: replace with working alert (might be broken only in chrome)
+const showAlert = (msg:string, duration:number) => { 
+    let alt:HTMLElement = document.createElement("div")
+     alt.setAttribute("style",`font-size: 2rem; 
+        position: fixed; top: 33%;
+        background-color: peachpuff;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 1rem;
+        min-width: 50%;
+        height: 33%; max-width: 85%;
+        border-radius: 1rem;
+        color: blue;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;`);
+     alt.innerHTML = msg;
+     setTimeout(function(){
+      alt.parentNode?.removeChild(alt);
+     }, duration);
+     document.body.appendChild(alt);
+}
+const playSound = async (soundType:number) => {
+    if(soundType === SoundTypes.WIN){
+        const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/win.wav'))
+        await sound.playAsync()
+    }
+}
 const generateData = (size:number):Array<Card> => {
     let cards:Array<Card> = Array<Card>()
     const randomsSet:Set<number> = new Set<number>()
-    const imageObj = utilsService.loadImages(size)
+    const imageObj = utilsService.loadImages()
     for(let index=0; index<size; index+=2){
-        let randomImage: number = Math.round(Math.random() * size/2)
+        let randomImage: number = Math.round(Math.random() * size)
         while(randomsSet.has(randomImage))
             randomImage = Math.round(Math.random() * size/2)
 
@@ -39,20 +77,18 @@ const generateData = (size:number):Array<Card> => {
     utilsService.shuffle(cards)
     return cards
 }
-
-
 const checkWinCondition = (cards:Array<Card>):boolean =>{
     for(const card of cards)
         if(card.disabled === false)
             return false
     return true
 }
+
 export const Grid = (props: GridProps) => {
-    let cards: Array<Card> = useMemo(()=>{
-            return generateData(props.size)
-        },[])
-    // let cards: Array<Card> = generateData(props.size)
-        
+    let cards:Array<Card> = useMemo(()=>{
+        return generateData(props.size)
+    },[])
+    
     const [moves, setMoves] = useState<number>(1)
     const [cardsArr, setCardsArr] = useState<Array<Card>>(cards)
     const [revealedCards, setRevealedCards] = useState<Set<Card>>(new Set<Card>())
@@ -86,11 +122,11 @@ export const Grid = (props: GridProps) => {
     }
     const handleMiss = ():void => {
         setDisableInteraction(true)
-        //show cards for .5 sec so user can see them 
+        //show cards for .75 sec so user can see them 
         setTimeout(()=>{
             resetRevealedCards()
             setDisableInteraction(false)
-        }, 1000) 
+        }, 750) 
     }
     const handleHit = (card1:Card, card2:Card):void => {
         card1.disabled = true
@@ -100,12 +136,10 @@ export const Grid = (props: GridProps) => {
         resetRevealedCards()
     }
     const handleWin = ():void => {
-        setTimeout(()=>{
-            alert(`Woo Hoo! finished in ${moves} moves`)//TODO:decide how victory behaves
-        }, 50) 
-        resetRevealedCards()
-    }
+        showAlert(`Woo Hoo! finished in ${moves} moves`, 332333)
 
+        playSound(SoundTypes.WIN)
+    }
     const resetRevealedCards = ():void => {
         let cards = [...cardsArr]
         for (const card of cards)
