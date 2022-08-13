@@ -41,9 +41,28 @@ const showAlert = (msg:string, duration:number) => {
      document.body.appendChild(alt);
 }
 const playSound = async (soundType:number) => {
-    if(soundType === SoundTypes.WIN){
-        const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/win.wav'))
-        await sound.playAsync()
+    switch(soundType){
+        case SoundTypes.WIN: {
+            const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/win.wav'))
+            await sound.playAsync()
+            break
+        }
+        case SoundTypes.CARD_CLICKED: {
+            const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/click.wav'))
+            await sound.playAsync()
+            break
+        }
+        case SoundTypes.PAIR_CORRECT: {
+            const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/correct.wav'))
+            await sound.playAsync()
+            break
+        }
+        case SoundTypes.PAIR_WRONG: {
+            const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/wrong.mp3'))
+            await sound.playAsync()
+            break
+        }
+        default:
     }
 }
 const generateData = (size:number):Array<Card> => {
@@ -101,6 +120,7 @@ export const Grid = (props: GridProps) => {
         const pressedCard:Card = cards.filter((card)=>{return card.index === pressedCardIndex})[0]
         const matchingCard:Card = cards.filter((card)=>{return card.index === pressedCard.match})[0]
         
+        playSound(SoundTypes.CARD_CLICKED)
         pressedCard.revealed = !pressedCard.revealed
         if(!pressedCard.revealed) { //case card "closed"
             resetRevealedCards()
@@ -114,10 +134,12 @@ export const Grid = (props: GridProps) => {
         }
         setMoves(moves+1)
         if(!matchingCard.revealed){//case 2nd card opened
+            playSound(SoundTypes.PAIR_WRONG)
             handleMiss()            
             return
         } 
-
+        
+        playSound(SoundTypes.PAIR_CORRECT)
         handleHit(pressedCard, matchingCard)
         if(checkWinCondition(cards)) handleWin()          
     }

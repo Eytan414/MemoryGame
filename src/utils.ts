@@ -1,8 +1,10 @@
 import { Card } from './types.d';
-import {Alert} from 'react-native'
 
 export enum SoundTypes {
   WIN,
+  CARD_CLICKED,
+  PAIR_CORRECT,
+  PAIR_WRONG,
 }
 const IMAGE_COUNT:number = 24
 const utilsService = 
@@ -12,7 +14,6 @@ const utilsService =
     let randomIndex:number
     
     while (currentIndex !== 0) {
-      // Pick a remaining element
       randomIndex = Math.floor(Math.random() * currentIndex)
       currentIndex--
 

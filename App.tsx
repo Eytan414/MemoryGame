@@ -5,7 +5,7 @@ import { Grid } from './src/grid';
 export default function App() {
   return (
     <View style={{
-      backgroundColor: '#333',
+      backgroundColor: '#212121',
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
