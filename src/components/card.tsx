@@ -57,4 +57,5 @@ export const CardComponent = (props: CardProps) => {
             </View>
         </Pressable>
     )
+
 }
