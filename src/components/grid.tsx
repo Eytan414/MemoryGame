@@ -1,8 +1,8 @@
-import React, { useMemo, useState} from 'react';
-import { View } from 'react-native';
-import { Card } from '../types';
+import React, { useEffect, useMemo, useState} from 'react';
+import { View, StyleSheet } from 'react-native';
+import { CARD_DELAY_BEFORE_FLIP, POPUP_DURATION } from '../data/constants';
+import { Card, Sounds } from '../types';
 import utilsService from "../utils/utils";
-import {SoundType} from "../data/constants";
 import {CardComponent} from "./card";
 
 interface GridProps {
@@ -17,25 +17,31 @@ const checkWinCondition = (cards:Array<Card>):boolean =>{
 }
 
 export const Grid = (props: GridProps) => {
-    // let cards:Array<Card> = useMemo(()=>{
-    //     return utilsService.generateData(props.size)
-    // },[])
-    let cards:Array<Card> = utilsService.generateData(props.size)
-    const [cardsArr, setCardsArr] = useState<Array<Card>>(cards)
-    if(cards.length !== cardsArr.length)
-        setCardsArr(cards)
+    const [cardsArr, setCardsArr] = useState<Array<Card>>([])
+    useEffect(()=>{
+        utilsService.generateData(props.size)
+            .then(cardsArr => {setCardsArr(cardsArr)}
+    )},[props.size])
     
     const [moves, setMoves] = useState<number>(1)
     const [revealedCards, setRevealedCards] = useState<Set<Card>>(new Set<Card>())
     const [disableInteraction, setDisableInteraction] = useState<boolean>(false)
+    
+    let sounds:Sounds;
+    useMemo( async ()=>{
+        return await utilsService.loadSounds()
+    },[])
+    .then(calculateSounds =>{
+        sounds = calculateSounds
+    })
 
-    const cardPressed = (pressedCardIndex:number):void =>{
+    const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
+        sounds.click.playAsync()
         let cards = [...cardsArr]
         let tmpRevealedCards = new Set<Card>(revealedCards)
         const pressedCard:Card = cards.filter((card)=>{return card.index === pressedCardIndex})[0]
         const matchingCard:Card = cards.filter((card)=>{return card.index === pressedCard.match})[0]
         
-        utilsService.playSound(SoundType.CARD_CLICKED)
         pressedCard.revealed = !pressedCard.revealed
         if(!pressedCard.revealed) { //case card "closed"
             resetRevealedCards()
@@ -58,24 +64,24 @@ export const Grid = (props: GridProps) => {
     }
     const handleMiss = ():void => {
         setDisableInteraction(true)
-        //show cards for .75 sec so user can see them 
         setTimeout(()=>{
-            utilsService.playSound(SoundType.PAIR_WRONG)
+            sounds.wrong.playAsync()
             resetRevealedCards()
             setDisableInteraction(false)
-        }, 750) 
+        }, CARD_DELAY_BEFORE_FLIP) 
     }
     const handleHit = (card1:Card, card2:Card):void => {
-        card1.disabled = true
-        card2.disabled = true
-        card1.revealed = true
-        card2.revealed = true
+        sounds.correct.playAsync();
+        [   card1.disabled,
+            card2.disabled,
+            card1.revealed,
+            card2.revealed
+        ] = Array(4).fill(true)
         resetRevealedCards()
-        utilsService.playSound(SoundType.PAIR_CORRECT)
     }
     const handleWin = ():void => {
-        utilsService.showAlert(`Woo Hoo! finished in ${moves} moves`, 3333)
-        utilsService.playSound(SoundType.WIN)
+        utilsService.showAlert(`Woo Hoo! finished in ${moves} moves`, POPUP_DURATION)
+        sounds.win.playAsync()
     }
     const resetRevealedCards = ():void => {
         let cards = [...cardsArr]
@@ -88,11 +94,10 @@ export const Grid = (props: GridProps) => {
 
     return (
         <View pointerEvents={disableInteraction ? "none" : "auto"} 
-            style={{
+            style={{       
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                margin: 10,
-            }}>
+                margin: 10,}}>
             <GridContext.Provider value={cardsArr}>
                 {cardsArr.map((card, index)=>{
                     return (
@@ -107,4 +112,11 @@ export const Grid = (props: GridProps) => {
         </View> 
     )
 }
+const styles = StyleSheet.create({
+    mainContainer:{
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        margin: 10,
+    }
+})
 export const GridContext = React.createContext(Array<Card>())

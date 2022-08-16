@@ -3,10 +3,11 @@ export enum Level {
     INTERMEDIATE,
     HARD,
 }
-export enum SoundType {
-    WIN,
-    CARD_CLICKED,
-    PAIR_CORRECT,
-    PAIR_WRONG,
+export const CardsCount:any = {
+    EASY: 12,
+    INTERMEDIATE: 16,
+    HARD: 24,
 }
 export const IMAGE_COUNT:number = 24
+export const CARD_DELAY_BEFORE_FLIP:number = 800
+export const POPUP_DURATION:number = 3333

@@ -1,6 +1,8 @@
+import { Sounds } from './../types.d';
 import { Card } from '../types';
 import { Audio } from 'expo-av';
-import {IMAGE_COUNT, SoundType} from '../data/constants';
+import {IMAGE_COUNT} from '../data/constants';
+import { Asset } from 'expo-asset';
 
 const utilsService = {
 	shuffle: (array: Card[]):void => {
@@ -15,21 +17,15 @@ const utilsService = {
 			[array[randomIndex], array[currentIndex]]
 		}
 	},
-	loadImages: () => {
-		const imagesObj = {}
-		for (let i = 0; i<IMAGE_COUNT; i++) {
-		imagesObj[i] = require(`../../assets/images/cardfaces/${i}.svg`) as string
-		}
-		return imagesObj
-	},
-	generateData: (size:number):Array<Card> => {
+	generateData: async (size:number):Promise<Array<Card>> => {
 		let cards:Array<Card> = Array<Card>()
 		const randomsSet:Set<number> = new Set<number>()
-		const imageObj = utilsService.loadImages()
+		const imageObj = await utilsService.loadImages()
+		
 		for(let index=0; index<size; index+=2){
 			let randomImage: number = Math.round(Math.random() * size)
 			while(randomsSet.has(randomImage))
-				randomImage = Math.round(Math.random() * size/2)
+				randomImage = Math.round(Math.random() * size)
 
 			randomsSet.add(randomImage)
 			const randomImageURL: string = imageObj[randomImage]
@@ -54,7 +50,6 @@ const utilsService = {
 		utilsService.shuffle(cards)
 		return cards
 	},
-	//TODO: replace with working alert (might be broken only in chrome)
 	showAlert: (text:string, duration:number) => { 
 		let modal:HTMLElement = document.createElement("div")
 		modal.setAttribute("style",`
@@ -80,30 +75,33 @@ const utilsService = {
 		}, duration)
 		document.body.appendChild(modal)
 	},
-	playSound: async (soundType:number) => {
-		switch(soundType){
-			case SoundType.WIN: {
-				const { sound } = await Audio.Sound.createAsync(require('../../assets/sounds/win.wav'))
-				await sound.playAsync()
-				break
-			}
-			case SoundType.CARD_CLICKED: {
-				const { sound } = await Audio.Sound.createAsync(require('../../assets/sounds/click.wav'))
-				await sound.playAsync()
-				break
-			}
-			case SoundType.PAIR_CORRECT: {
-				const { sound } = await Audio.Sound.createAsync(require('../../assets/sounds/correct.wav'))
-				await sound.playAsync()
-				break
-			}
-			case SoundType.PAIR_WRONG: {
-				const { sound } = await Audio.Sound.createAsync(require('../../assets/sounds/wrong.mp3'))
-				await sound.playAsync()
-				break
-			}
-			default:
+	loadImages: async () => {
+		const imagesObj = {}
+		for (let i = 0; i<IMAGE_COUNT; i++)
+			imagesObj[i] = await require(`../../assets/images/cardfaces/${i}.svg`) as string
+		
+		return imagesObj
+	},
+	loadSounds: async ():Promise<Sounds>=>{		
+		const [winSrc, wrongSrc, clickSrc, correctSrc] = 
+			await Asset.loadAsync([
+				require('../../assets/sounds/win.wav'),
+				require('../../assets/sounds/wrong.mp3'),
+				require('../../assets/sounds/click.wav'),
+				require('../../assets/sounds/correct.wav')
+		])
+		const win = await Audio.Sound.createAsync(winSrc)
+		const wrong = await Audio.Sound.createAsync(wrongSrc)
+		const click = await Audio.Sound.createAsync(clickSrc)
+		const correct = await Audio.Sound.createAsync(correctSrc)
+		 
+		const sounds = {
+			win: win.sound,
+			click: click.sound,
+			correct: correct.sound,
+			wrong: wrong.sound,
 		}
-	}
+		return sounds
+	},
 }
 export default utilsService
