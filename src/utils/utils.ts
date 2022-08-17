@@ -50,31 +50,6 @@ const utilsService = {
 		utilsService.shuffle(cards)
 		return cards
 	},
-	showAlert: (text:string, duration:number) => { 
-		let modal:HTMLElement = document.createElement("div")
-		modal.setAttribute("style",`
-			font-size: 2rem; 
-			position: fixed; 
-			background-color: peachpuff;
-			left: 50%; top: 50%;
-			transform: translate(-50%, -50%);
-			padding: 1rem;
-			min-width: 50%;
-			height: 33%; max-width: 85%;
-			border-radius: 1rem;
-			color: blue;
-			font-weight: bold;
-			display: flex;
-			text-align: center;
-			align-items: center;
-			justify-content: center;
-		`)
-		modal.innerHTML = text
-		setTimeout(function(){
-			modal.parentNode?.removeChild(modal)
-		}, duration)
-		document.body.appendChild(modal)
-	},
 	loadImages: async () => {
 		const imagesObj = {}
 		for (let i = 0; i<IMAGE_COUNT; i++)
@@ -103,5 +78,15 @@ const utilsService = {
 		}
 		return sounds
 	},
+	shareScore: async (text: string) => {
+		const dataToShare = {
+		  title: 'Memory Challenge',
+		  text: text,
+		  url: ''
+		}; 
+		try {
+		  await navigator.share(dataToShare);
+		} catch(err) {}
+	  }
 }
 export default utilsService

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Image, Text, Dimensions, Pressable, View } from 'react-native';
-import { GridContext } from './grid';
+import { GridContext } from './Grid';
 
 interface CardProps {
     index: number,
@@ -21,7 +21,6 @@ export const CardComponent = (props: CardProps) => {
                 flexBasis: '25%',
                 alignItems: 'center',
                 padding: 20,
-                // maxHeight,
             }}>
                 <View style={{
                     // ...styles.wrapper,
