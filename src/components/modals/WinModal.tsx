@@ -7,6 +7,7 @@ interface ModalProps{
     level: string,
     navigation:any,
     moves:number,
+    time:number,
     show:boolean,
 }
 
@@ -36,7 +37,8 @@ export const WinModal = (props: ModalProps) => {
                     },
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
-                    elevation: 5,            
+                    elevation: 5,
+                    maxWidth: '50%'    
                 }}>
                     <Text style={{
                         fontSize: 30,
@@ -45,7 +47,7 @@ export const WinModal = (props: ModalProps) => {
                         marginBottom: 25,
                         textAlign: 'center',
                     }}>
-                        {`Woo Hoo! finished in ${props.moves} moves`}
+                        {`Finished in ${props.moves} moves and ${props.time.toFixed(1)} seconds on ${props.level} difficulty`}
                     </Text>
                     <View style={{
                         flexDirection: 'row',
@@ -58,6 +60,7 @@ export const WinModal = (props: ModalProps) => {
                         ></GoHomeButton>
                         <ShareButton
                             level={props.level}
+                            time={props.time}
                             moves={props.moves}
                         ></ShareButton>
                     </View>

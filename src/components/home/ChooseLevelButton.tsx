@@ -29,7 +29,7 @@ export const ChooseLevelButton = (props: ButtonProps) => {
     },[])
     
     const pickLevel = ():void => {
-        props.navigation.navigate(PAGE_GRID, {size: 2})
+        props.navigation.navigate(PAGE_GRID, {size: props.level})
 	}
 
     return (

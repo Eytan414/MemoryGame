@@ -1,11 +1,11 @@
 import { Sounds } from './../types.d';
-import { Card } from '../types';
+import { GameCard } from '../types';
 import { Audio } from 'expo-av';
 import {IMAGE_COUNT} from '../data/constants';
 import { Asset } from 'expo-asset';
 
 const utilsService = {
-	shuffle: (array: Card[]):void => {
+	shuffle: (array: GameCard[]):void => {
 		let currentIndex:number = array.length
 		let randomIndex:number
 		
@@ -17,8 +17,8 @@ const utilsService = {
 			[array[randomIndex], array[currentIndex]]
 		}
 	},
-	generateData: async (size:number):Promise<Array<Card>> => {
-		let cards:Array<Card> = Array<Card>()
+	generateData: async (size:number):Promise<Array<GameCard>> => {
+		const cards:Array<GameCard> = Array<GameCard>()
 		const randomsSet:Set<number> = new Set<number>()
 		const imageObj = await utilsService.loadImages()
 		
@@ -30,7 +30,7 @@ const utilsService = {
 			randomsSet.add(randomImage)
 			const randomImageURL: string = imageObj[randomImage]
 
-			const card: Card = {
+			const card: GameCard = {
 				index,
 				match: index+1,
 				imageUrl: randomImageURL,
@@ -38,7 +38,7 @@ const utilsService = {
 				disabled: false,
 			}
 			cards.push(card)
-			const matchingCard: Card = {
+			const matchingCard: GameCard = {
 				index: index+1,
 				match: index,
 				imageUrl: randomImageURL,

@@ -1,18 +1,16 @@
 import React from 'react';
 import { Dimensions, View, Text } from 'react-native';
-import { CardsCount} from '../../data/constants';
+import { CardsCount, DEFAULT_BACKGROUND_COLOR} from '../../data/constants';
 import { ChooseLevelButton } from './ChooseLevelButton';
 
 export const Home = ({navigation}) => {
-    let dims = Dimensions.get('screen')
-
     return (
         <View style={{
-            backgroundColor: '#212121',
+            backgroundColor: DEFAULT_BACKGROUND_COLOR,
             alignItems: 'center',
-            justifyContent: 'center',
             width: '100%',
-            height: '100%',}}>
+            height: '100%',}}
+        >
             {<>
                 <Text style={{
                     fontSize: 36,

@@ -1,13 +1,13 @@
-import React, { useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState} from 'react';
 import { View, StyleSheet } from 'react-native';
-import { CardsCount, CARD_DELAY_BEFORE_FLIP } from '../../../data/constants';
-import { Card, Sounds } from '../../../types';
+import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR } from '../../../data/constants';
+import { GameCard, Sounds } from '../../../types';
 import utilsService from "../../../utils/utils";
 import {CardComponent} from "./../Card/Card";
 import { WinModal } from '../../modals/WinModal';
 import { GridHead } from './GridHead';
 
-const checkWinCondition = (cards:Array<Card>):boolean =>{
+const checkWinCondition = (cards:Array<GameCard>):boolean =>{
     for(const card of cards)
         if(card.disabled === false)
             return false
@@ -16,16 +16,29 @@ const checkWinCondition = (cards:Array<Card>):boolean =>{
 
 export const Grid = (props:any) => {
     const [modalVisible, setModalVisible] = useState<boolean>(false)    
-    const [cardsArr, setCardsArr] = useState<Array<Card>>([])
+    const [cardsArr, setCardsArr] = useState<Array<GameCard>>([])
     useMemo(()=>{
         utilsService.generateData(props.route.params.size)
             .then(cardsArr => {setCardsArr(cardsArr)}
     )},[props.route.params.size])
     
-    const [moves, setMoves] = useState<number>(0)
-    const [revealedCards, setRevealedCards] = useState<Set<Card>>(new Set<Card>())
+    const [interaction, setInteraction] = useState({
+        moves: 0,
+        gameActive: false
+    })
+    const [revealedCards, setRevealedCards] = useState<Set<GameCard>>(new Set<GameCard>())
     const [disableInteraction, setDisableInteraction] = useState<boolean>(false)
-    
+    const [elpased, setElpased] = useState<number>(0)
+
+    useEffect(()=>{
+        const interval = setInterval(()=>{
+            if(interaction.gameActive)
+                setElpased(prevState => prevState + .1)
+        }, 100)
+        return () => clearInterval(interval)
+    },[interaction.gameActive])
+
+
     let sounds:Sounds;
     useMemo( async ()=>{
         return await utilsService.loadSounds()
@@ -40,10 +53,11 @@ export const Grid = (props:any) => {
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
+        updateIsGameActive(true)
         let cards = [...cardsArr]
-        let tmpRevealedCards = new Set<Card>(revealedCards)
-        const pressedCard:Card = cards.filter((card)=>{return card.index === pressedCardIndex})[0]
-        const matchingCard:Card = cards.filter((card)=>{return card.index === pressedCard.match})[0]
+        let tmpRevealedCards = new Set<GameCard>(revealedCards)
+        const pressedCard:GameCard = cards.filter((card)=>{return card.index === pressedCardIndex})[0]
+        const matchingCard:GameCard = cards.filter((card)=>{return card.index === pressedCard.match})[0]
         
         if(pressedCard.revealed) return //case card "closed"
         
@@ -54,7 +68,7 @@ export const Grid = (props:any) => {
             setRevealedCards(tmpRevealedCards)
             return
         }
-        setMoves(prevMoves => prevMoves + 1)
+        incrementMoves()
 
         if(!matchingCard.revealed){//case 2nd card opened
             handleMiss()            
@@ -72,7 +86,7 @@ export const Grid = (props:any) => {
             setDisableInteraction(false)
         }, CARD_DELAY_BEFORE_FLIP) 
     }
-    const handleHit = (card1:Card, card2:Card):void => {
+    const handleHit = (card1:GameCard, card2:GameCard):void => {
         sounds.correct.playAsync();
         [   card1.disabled,
             card2.disabled,
@@ -82,44 +96,66 @@ export const Grid = (props:any) => {
         resetRevealedCards()
     }
     const handleWin = ():void => {
-        setModalVisible(true)
+        updateIsGameActive(false)
         sounds.win.playAsync()
+        setModalVisible(true)
     }
     const resetRevealedCards = ():void => {
-        let cards = [...cardsArr]
+        const cards = [...cardsArr]
         for (const card of cards)
             if(card.revealed && !card.disabled)
                 card.revealed = false
         setCardsArr(cards)
-        setRevealedCards(new Set<Card>())
+        setRevealedCards(new Set<GameCard>())
     }
-    return (<>
-        <GridHead
-            navigation={props.navigation}
-        />
-        <View style={{       
-            backgroundColor: '#212121',
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-        }}
-            pointerEvents={disableInteraction ? "none" : "auto"} 
-        >
-            <WinModal 
-                level={level}
+    const incrementMoves = () => {
+        setInteraction(prevMoves => {
+            let interaction = {...prevMoves}
+            interaction.moves += 1
+            return interaction
+        }) 
+    }
+    const updateIsGameActive = (gameActive:boolean) => {
+        setInteraction(prevMoves => {
+            let interaction = {...prevMoves}
+            interaction.gameActive = gameActive
+            return interaction
+        }) 
+    }
+    return (
+            <>
+            <GridHead
                 navigation={props.navigation}
-                moves={moves}
-                show={modalVisible}
+                elpased={elpased}
+                moves={interaction.moves}
             />
-            { cardsArr.map((card, index)=>{ return (
-                <CardComponent
-                    onPress={cardPressed}
-                    key={index} 
-                    index={card.index} 
-                    cards={cardsArr}
-                />                        
-            )}) }
-        </View> 
-    </>)
+            <View style={{       
+                backgroundColor: DEFAULT_BACKGROUND_COLOR,
+                flexWrap: 'wrap',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                maxWidth: '85%',
+                alignSelf: 'center'
+            }}
+                pointerEvents={disableInteraction ? "none" : "auto"} 
+            >
+                <WinModal 
+                    level={level}
+                    navigation={props.navigation}
+                    moves={interaction.moves}
+                    time={elpased}
+                    show={modalVisible}
+                />
+                { cardsArr.map((card, index)=>{ return (
+                    <CardComponent
+                        onPress={cardPressed}
+                        key={index} 
+                        index={card.index} 
+                        cards={cardsArr}
+                    />                        
+                )}) }
+            </View> 
+        </>
+    )
 }

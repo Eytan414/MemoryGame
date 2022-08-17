@@ -1,4 +1,4 @@
-export interface Card{
+export interface GameCard{
     match: number,
     index: number,
     imageUrl: any,

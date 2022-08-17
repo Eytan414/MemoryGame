@@ -5,12 +5,13 @@ import utilsService from '../../utils/utils';
 interface Props{
     level: string,
     moves:number,
+    time:number,
 }
 
 export const ShareButton = (props: Props) => {
     
     const shareScore = ():void => {
-        let text = `Woo Hoo! finished in ${props.moves} moves on ${props.level} difficulty !`
+        const text = `Woo Hoo! finished in ${props.moves} moves and ${props.time.toFixed(1)} seconds on ${props.level} difficulty !`
         utilsService.shareScore(text)
     }
 

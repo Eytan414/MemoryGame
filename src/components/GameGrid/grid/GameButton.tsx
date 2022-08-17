@@ -24,6 +24,7 @@ export const GameButton = (props: ButtonProps) => {
                 justifyContent: 'center',
                 paddingVertical: 12,
                 paddingHorizontal: 32,
+                marginHorizontal: 12,
                 borderRadius: 55,
                 elevation: 3,
             }}>
