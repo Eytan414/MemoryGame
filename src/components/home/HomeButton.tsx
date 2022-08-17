@@ -29,7 +29,7 @@ export const HomeButton = (props: ButtonProps) => {
     },[])
     
     const pickLevel = ():void => {
-        props.navigation.navigate('Grid', {size: 2})
+        props.navigation.navigate('Grid', {size: props.level})
 	}
 
     return (

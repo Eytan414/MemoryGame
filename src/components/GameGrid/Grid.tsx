@@ -1,10 +1,11 @@
 import React, { useMemo, useState} from 'react';
-import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
+import { View, Modal, StyleSheet } from 'react-native';
 import { CardsCount, CARD_DELAY_BEFORE_FLIP, PAGE_HOME } from '../../data/constants';
 import { Card, Sounds } from '../../types';
 import utilsService from "../../utils/utils";
 import {CardComponent} from "./Card";
 import {GameButton} from "./GameButton";
+import { WinModal } from './WinModal';
 
 const checkWinCondition = (cards:Array<Card>):boolean =>{
     for(const card of cards)
@@ -14,8 +15,7 @@ const checkWinCondition = (cards:Array<Card>):boolean =>{
 }
 
 export const Grid = (props:any) => {
-    const [modalVisible, setModalVisible] = useState<boolean>(false)
-    
+    const [modalVisible, setModalVisible] = useState<boolean>(false)    
     const [cardsArr, setCardsArr] = useState<Array<Card>>([])
     useMemo(()=>{
         utilsService.generateData(props.route.params.size)
@@ -33,6 +33,10 @@ export const Grid = (props:any) => {
     .then(calculateSounds =>{
         sounds = calculateSounds
     })
+
+    const level = props.route.params.size === CardsCount.EASY ? 'easy'
+        : props.route.params.size === CardsCount.INTERMEDIATE ? 'intermediate'
+        : 'hard'
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
@@ -89,13 +93,6 @@ export const Grid = (props:any) => {
         setCardsArr(cards)
         setRevealedCards(new Set<Card>())
     }
-    const shareScore = ():void => {
-        let level = props.route.params.size === CardsCount.EASY ? 'easy'
-            : props.route.params.size === CardsCount.INTERMEDIATE ? 'intermediate'
-            : 'hard'
-        let text = `Woo Hoo! finished in ${moves} moves on ${level} difficulty !`
-        utilsService.shareScore(text)
-    }
     return (<>
         <View style={{
             height: 80,
@@ -125,83 +122,11 @@ export const Grid = (props:any) => {
                 transparent={true}
                 visible={modalVisible}
             >
-                <View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: 22,
-                }}>
-                    <View style={{
-                        margin: 20,
-                        backgroundColor: 'peachpuff',
-                        borderRadius: 20,
-                        padding: 35,
-                        alignItems: 'center',
-                        shadowColor: '#000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 2,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        elevation: 5,
-                    
-                    }}>
-                        <Text style={{
-                            fontSize: 30,
-                            fontWeight: 'bold',
-                            color: 'blue',
-                            marginBottom: 25,
-                            textAlign: 'center',
-                        }}>
-                            {`Woo Hoo! finished in ${moves} moves`}
-                        </Text>
-                        <View style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-evenly',
-                                alignContent:'center',
-                                width: '100%',
-                            }}
-
-                        >
-                            <Pressable
-                                style={{
-                                    backgroundColor: 'saddlebrown',
-                                    borderRadius: 20,
-                                    paddingHorizontal: 20,
-                                    paddingVertical: 8,
-                                    elevation: 2,
-                                }}
-                                onPress={() => props.navigation.navigate('Home')}
-                                >
-                                <Text style={{
-                                    color: 'blanchedalmond',
-                                    textAlign: 'center',
-                                    textAlignVertical: 'center',
-                                    fontSize: 16
-                                }}>🏠 Home</Text>
-                            </Pressable>
-                            <Pressable
-                                style={{
-                                    backgroundColor: 'lightsteelblue',
-                                    borderRadius: 20,
-                                    paddingHorizontal: 20,
-                                    paddingVertical: 8,
-                                    elevation: 2,
-                                }}
-                                onPress={shareScore}
-                                >
-                                <Text style={{
-                                    color: 'green',
-                                    textAlign: 'center',
-                                    textAlignVertical: 'center',
-                                    fontSize: 16 
-                                }}>Share</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                
-                </View>
+                <WinModal 
+                    level={level}
+                    navigation={props.navigation}
+                    moves={moves}
+                />
             </Modal>
             <GridContext.Provider value={cardsArr}>
                 {cardsArr.map((card, index)=>{
@@ -217,11 +142,4 @@ export const Grid = (props:any) => {
         </View> 
     </>)
 }
-const styles = StyleSheet.create({
-    mainContainer:{
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        margin: 10,
-    }
-})
 export const GridContext = React.createContext(Array<Card>())
