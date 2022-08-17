@@ -1,6 +1,6 @@
-import React, {useEffect, useState } from 'react';
+import React from 'react';
 import { Text, Pressable } from 'react-native';
-import { CardsCount, DEFAULT_BUTTON_COLOR } from '../../data/constants';
+import { DEFAULT_BUTTON_COLOR } from '../../../data/constants';
 
 interface ButtonProps{
     navigation:any,

@@ -1,11 +1,11 @@
 import React, { useMemo, useState} from 'react';
-import { View, Modal, StyleSheet } from 'react-native';
-import { CardsCount, CARD_DELAY_BEFORE_FLIP, PAGE_HOME } from '../../data/constants';
-import { Card, Sounds } from '../../types';
-import utilsService from "../../utils/utils";
-import {CardComponent} from "./Card";
-import {GameButton} from "./GameButton";
-import { WinModal } from './WinModal';
+import { View, StyleSheet } from 'react-native';
+import { CardsCount, CARD_DELAY_BEFORE_FLIP } from '../../../data/constants';
+import { Card, Sounds } from '../../../types';
+import utilsService from "../../../utils/utils";
+import {CardComponent} from "./../Card/Card";
+import { WinModal } from '../../modals/WinModal';
+import { GridHead } from './GridHead';
 
 const checkWinCondition = (cards:Array<Card>):boolean =>{
     for(const card of cards)
@@ -94,52 +94,32 @@ export const Grid = (props:any) => {
         setRevealedCards(new Set<Card>())
     }
     return (<>
-        <View style={{
-            height: 80,
-            paddingTop: 20,
-            paddingBottom: 30,
+        <GridHead
+            navigation={props.navigation}
+        />
+        <View style={{       
             backgroundColor: '#212121',
+            flexWrap: 'wrap',
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-        }}>
-            <GameButton
-                navigation={props.navigation} 
-                pageToNavigate={PAGE_HOME} 
-                title={PAGE_HOME} 
+        }}
+            pointerEvents={disableInteraction ? "none" : "auto"} 
+        >
+            <WinModal 
+                level={level}
+                navigation={props.navigation}
+                moves={moves}
+                show={modalVisible}
             />
-        </View>
-        <View pointerEvents={disableInteraction ? "none" : "auto"} 
-            style={{       
-                backgroundColor: '#212121',
-                flexWrap: 'wrap',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-            >
-                <WinModal 
-                    level={level}
-                    navigation={props.navigation}
-                    moves={moves}
-                />
-            </Modal>
-            <GridContext.Provider value={cardsArr}>
-                {cardsArr.map((card, index)=>{
-                    return (
-                        <CardComponent
-                            onPress={cardPressed}
-                            key={index} 
-                            index={card.index} 
-                        />                        
-                    )
-                })}
-            </GridContext.Provider>
+            { cardsArr.map((card, index)=>{ return (
+                <CardComponent
+                    onPress={cardPressed}
+                    key={index} 
+                    index={card.index} 
+                    cards={cardsArr}
+                />                        
+            )}) }
         </View> 
     </>)
 }
-export const GridContext = React.createContext(Array<Card>())

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dimensions, View, Text } from 'react-native';
 import { CardsCount} from '../../data/constants';
-import { HomeButton } from './HomeButton';
+import { ChooseLevelButton } from './ChooseLevelButton';
 
 export const Home = ({navigation}) => {
     let dims = Dimensions.get('screen')
@@ -34,10 +34,9 @@ export const Home = ({navigation}) => {
                     height: '50%',
                     justifyContent: 'space-evenly',
                 }}>
-                    <HomeButton navigation={navigation} level={CardsCount.EASY} />
-                    <HomeButton navigation={navigation} level={CardsCount.INTERMEDIATE} />
-                    <HomeButton navigation={navigation} level={CardsCount.HARD} />
-                 
+                    <ChooseLevelButton navigation={navigation} level={CardsCount.EASY} />
+                    <ChooseLevelButton navigation={navigation} level={CardsCount.INTERMEDIATE} />
+                    <ChooseLevelButton navigation={navigation} level={CardsCount.HARD} />
                 </View>
             </>}
         </View>
