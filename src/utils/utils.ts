@@ -36,6 +36,7 @@ const utilsService = {
 				imageUrl: randomImageURL,
 				revealed: false,
 				disabled: false,
+				flipped: true
 			}
 			cards.push(card)
 			const matchingCard: GameCard = {
@@ -44,6 +45,7 @@ const utilsService = {
 				imageUrl: randomImageURL,
 				revealed: false,
 				disabled: false,
+				flipped: true
 			}
 			cards.push(matchingCard)
 		}

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState} from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Animated } from 'react-native';
 import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR } from '../../../data/constants';
 import { GameCard, Sounds } from '../../../types';
 import utilsService from "../../../utils/utils";
@@ -17,9 +17,13 @@ const checkWinCondition = (cards:Array<GameCard>):boolean =>{
 export const Grid = (props:any) => {
     const [modalVisible, setModalVisible] = useState<boolean>(false)    
     const [cardsArr, setCardsArr] = useState<Array<GameCard>>([])
-    useMemo(()=>{
+    const [loading, setLoading] = useState<boolean>(true)
+    useMemo(async ()=>{
         utilsService.generateData(props.route.params.size)
-            .then(cardsArr => {setCardsArr(cardsArr)}
+            .then(cardsArr => {
+                setLoading(false)
+                setCardsArr(cardsArr)
+            }
     )},[props.route.params.size])
     
     const [interaction, setInteraction] = useState({
@@ -40,7 +44,6 @@ export const Grid = (props:any) => {
         return () => clearInterval(interval)
     },[interaction.gameActive])
 
-
     let sounds:Sounds;
     useMemo( async ()=>{
         return await utilsService.loadSounds()
@@ -55,7 +58,8 @@ export const Grid = (props:any) => {
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
-        updateIsGameActive(true)
+        if(!interaction.gameActive) updateIsGameActive(true)
+
         let cards = [...cardsArr]
         let tmpRevealedCards = new Set<GameCard>(revealedCards)
         const pressedCard:GameCard = cards.filter((card)=>{return card.index === pressedCardIndex})[0]
@@ -106,11 +110,19 @@ export const Grid = (props:any) => {
     }
     const resetRevealedCards = ():void => {
         const cards = [...cardsArr]
-        for (const card of cards)
-            if(card.revealed && !card.disabled)
-                card.revealed = false
+        for (const card of cards){
+            if(card.disabled) continue
+            if(card.revealed){
+                // card.revealed = false
+                card.flipped = !card.flipped
+                // flipCard(card)
+            }
+        }
         setCardsArr(cards)
         setRevealedCards(new Set<GameCard>())
+    }
+    const flipCard = (card:GameCard) => {
+
     }
     const incrementMoves = () => {
         setInteraction(prevMoves => {
@@ -143,6 +155,8 @@ export const Grid = (props:any) => {
             updateBestStreak(newStreak)
     }
     return (
+        loading ? <h1>loading</h1>
+        :
             <>
             <GridHead
                 navigation={props.navigation}
@@ -164,20 +178,20 @@ export const Grid = (props:any) => {
             >
                 <WinModal 
                     level={level}
-                    cardsCount={cardsArr.length}
+                    cardsCount={cardsArr?.length}
                     navigation={props.navigation}
                     moves={interaction.moves}
                     time={elpased}
                     show={modalVisible}
                 />
-                { cardsArr.map((card, index)=>{ return (
+                { cardsArr.map((card, index)=>(
                     <CardComponent
                         onPress={cardPressed}
-                        key={index} 
-                        index={card.index} 
+                        key={index}
+                        index={card.index}
                         cards={cardsArr}
-                    />                        
-                )}) }
+                        flipped={card.flipped} />
+                )) }
             </View> 
         </>
     )
