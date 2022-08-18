@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Pressable } from 'react-native';
-import utilsService from '../../utils/utils';
+import utils from '../../utils/utils';
 
 interface Props{
     level: string,
@@ -12,7 +12,7 @@ export const ShareButton = (props: Props) => {
     
     const shareScore = ():void => {
         const text = `Woo Hoo! finished in ${props.moves} moves and ${props.time.toFixed(1)} seconds on ${props.level} difficulty !`
-        utilsService.shareScore(text)
+        utils.shareScore(text)
     }
 
     return (

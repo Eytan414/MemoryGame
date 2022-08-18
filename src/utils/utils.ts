@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import {IMAGE_COUNT} from '../data/constants';
 import { Asset } from 'expo-asset';
 
-const utilsService = {
+const utils = {
 	shuffle: (array: GameCard[]):void => {
 		let currentIndex:number = array.length
 		let randomIndex:number
@@ -20,7 +20,7 @@ const utilsService = {
 	generateData: async (size:number):Promise<Array<GameCard>> => {
 		const cards:Array<GameCard> = Array<GameCard>()
 		const randomsSet:Set<number> = new Set<number>()
-		const imageObj = await utilsService.loadImages()
+		const imageObj = await utils.loadImages()
 		
 		for(let index=0; index<size; index+=2){
 			let randomImage: number = Math.round(Math.random() * size)
@@ -49,7 +49,7 @@ const utilsService = {
 			}
 			cards.push(matchingCard)
 		}
-		utilsService.shuffle(cards)
+		utils.shuffle(cards)
 		return cards
 	},
 	loadImages: async () => {
@@ -91,4 +91,4 @@ const utilsService = {
 		} catch(err) {}
 	  }
 }
-export default utilsService
+export default utils

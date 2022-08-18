@@ -1,7 +1,14 @@
+import { Records, LevelStats } from './../types.d';
 export const CardsCount:any = {
     EASY: 16,
     INTERMEDIATE: 20,
     HARD: 24,
+    // EXPERT: 28, after adding more img assets
+}
+export const Level:any = {
+    EASY: 'easy',
+    INTERMEDIATE: 'intermediate',
+    HARD: 'hard'
 }
 export const MODAL_WIDTH_DESKTOP:string = '50%'
 export const MODAL_WIDTH_MOBILE:string = '90%'
@@ -27,3 +34,17 @@ export const DEFAULT_BACKGROUND_COLOR:string = '#212121'
 export const DEFAULT_TEXT_COLOR:string = 'lightblue'
 // Light theme:
 //
+
+// storage
+export const RECORDS:string ='records'
+export const EMPTY_RECORD:LevelStats = {
+    time: 9999,
+    moves: 9999,
+    streak: 0,
+}
+export const EMPTY_RECORDS:Records = {
+    easy: EMPTY_RECORD,
+    intermediate: EMPTY_RECORD,
+    hard: EMPTY_RECORD,
+}
+

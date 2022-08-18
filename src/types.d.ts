@@ -12,3 +12,13 @@ export interface Sounds{
     correct: any,
     wrong: any,
 }
+export interface Records{
+    easy: LevelStats,
+    intermediate: LevelStats,
+    hard: LevelStats,
+}
+export interface LevelStats{
+    time: number,
+    moves: number,
+    streak: number,
+}

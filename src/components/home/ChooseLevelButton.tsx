@@ -1,6 +1,8 @@
 import React, {useEffect, useState } from 'react';
 import { Text, Pressable } from 'react-native';
-import { CardsCount, PAGE_GRID } from '../../data/constants';
+import { CardsCount, Level, PAGE_GRID } from '../../data/constants';
+import { Records } from '../../types';
+import storage from '../../utils/storage';
 
 interface ButtonProps{
     level: number,
@@ -10,20 +12,24 @@ interface ButtonProps{
 export const ChooseLevelButton = (props: ButtonProps) => {
     const [color, setColor] = useState<string>('')
     const [title, setTitle] = useState<string>('')
-    
+    let levelKey:string = ''
+
     useEffect(()=>{
         switch(props.level){
             case CardsCount.EASY:
                 setColor('green')
                 setTitle('Easy')
+                levelKey = Level.EASY
                 break
             case CardsCount.INTERMEDIATE:
                 setColor('darkorange')
                 setTitle('Intermediate')
+                levelKey = Level.INTERMEDIATE
                 break
             case CardsCount.HARD:
                 setColor('orangered')
                 setTitle('Hard')
+                levelKey = Level.HARD
                 break
         }
     },[])
@@ -31,7 +37,8 @@ export const ChooseLevelButton = (props: ButtonProps) => {
     const pickLevel = ():void => {
         props.navigation.navigate(PAGE_GRID, {size: props.level})
 	}
-
+    const allrecords:Records = storage.getRecords() as unknown as Records
+    const levelRecords = allrecords[levelKey]
     return (
         <Pressable
             onPress={()=>{ pickLevel() }}

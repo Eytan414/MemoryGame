@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState} from 'react';
 import { View, StyleSheet } from 'react-native';
-import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR } from '../../../data/constants';
-import { GameCard, Sounds } from '../../../types';
-import utilsService from "../../../utils/utils";
+import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR, Level } from '../../../data/constants';
+import { GameCard, LevelStats, Records, Sounds } from '../../../types';
+import utils from "../../../utils/utils";
+import storage from "../../../utils/storage";
 import {CardComponent} from "./../Card/Card";
 import { WinModal } from '../../modals/WinModal';
 import { GridHead } from './GridHead';
@@ -19,7 +20,7 @@ export const Grid = (props:any) => {
     const [cardsArr, setCardsArr] = useState<Array<GameCard>>([])
     const [loading, setLoading] = useState<boolean>(true)
     useMemo(async ()=>{
-        utilsService.generateData(props.route.params.size)
+        utils.generateData(props.route.params.size)
             .then(cardsArr => {
                 setLoading(false)
                 setCardsArr(cardsArr)
@@ -46,15 +47,15 @@ export const Grid = (props:any) => {
 
     let sounds:Sounds;
     useMemo( async ()=>{
-        return await utilsService.loadSounds()
+        return await utils.loadSounds()
     },[])
     .then(calculateSounds =>{
         sounds = calculateSounds
     })
 
-    const level = props.route.params.size === CardsCount.EASY ? 'easy'
-        : props.route.params.size === CardsCount.INTERMEDIATE ? 'intermediate'
-        : 'hard'
+    const level = props.route.params.size === CardsCount.EASY ? Level.EASY
+        : props.route.params.size === CardsCount.INTERMEDIATE ? Level.INTERMEDIATE
+        : Level.HARD
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
@@ -108,6 +109,23 @@ export const Grid = (props:any) => {
         updateIsGameActive(false)
         sounds.win.playAsync()
         setModalVisible(true)
+        updateRecordIfNeeded()
+    }
+    const updateRecordIfNeeded = async() => {
+        const records:Records = await storage.getRecords() as unknown as Records
+        const newRecord:LevelStats = {
+            time: elpased < records[level].time ?
+                  elpased.toFixed(1) 
+                : records[level].time,
+            moves: interaction.moves < records[level].moves ?
+                  interaction.moves 
+                : records[level].moves,
+            streak: interaction.bestStreak > records[level].streak ?
+                  interaction.bestStreak 
+                :records[level].streak
+        }
+        records[level] = newRecord        
+        storage.updateRecords(records)
     }
     const resetRevealedCards = ():void => {
         const cards = [...cardsArr]
