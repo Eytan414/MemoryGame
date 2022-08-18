@@ -9,6 +9,8 @@ import { GRID_HEAD_HEIGHT,
 interface Props{
     elpased:number,
     moves:number,
+    currentStreak:number,
+    bestStreak:number,
     navigation:any
 }
 export const GridHead = (props:Props) => {
@@ -22,8 +24,7 @@ export const GridHead = (props:Props) => {
             backgroundColor: '#212121',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-evenly',
-            maxWidth: '85%',
+            justifyContent: 'space-between',
             alignSelf: 'center'
         }}>
             <><Text style={{
@@ -45,7 +46,7 @@ export const GridHead = (props:Props) => {
                 fontWeight: 'bold',
                 padding: 8
             }}>
-                {`Moves: ${props.moves}`}
+                {`Moves: ${props.moves} | Current streak: ${props.currentStreak} | Best streak: ${props.bestStreak}`}
             </Text>
         </></View>
     )

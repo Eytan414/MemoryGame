@@ -20,7 +20,7 @@ export const ShareButton = (props: Props) => {
              style={{
                 backgroundColor: 'lightsteelblue',
                 borderRadius: 20,
-                paddingHorizontal: 20,
+                paddingHorizontal: 16,
                 paddingVertical: 8,
                 elevation: 2,
             }}

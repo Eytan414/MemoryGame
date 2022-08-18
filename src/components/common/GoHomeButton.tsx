@@ -13,7 +13,7 @@ export const GoHomeButton = (props: Props) => {
         style={{
             backgroundColor: 'saddlebrown',
             borderRadius: 20,
-            paddingHorizontal: 20,
+            paddingHorizontal: 16,
             paddingVertical: 8,
             elevation: 2,
         }}

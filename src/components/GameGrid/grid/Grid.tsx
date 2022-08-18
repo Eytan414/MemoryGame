@@ -24,6 +24,8 @@ export const Grid = (props:any) => {
     
     const [interaction, setInteraction] = useState({
         moves: 0,
+        bestStreak: 0,
+        currentStreak: 0,
         gameActive: false
     })
     const [revealedCards, setRevealedCards] = useState<Set<GameCard>>(new Set<GameCard>())
@@ -85,6 +87,7 @@ export const Grid = (props:any) => {
             resetRevealedCards()
             setDisableInteraction(false)
         }, CARD_DELAY_BEFORE_FLIP) 
+        updateCurrentStreak(0)
     }
     const handleHit = (card1:GameCard, card2:GameCard):void => {
         sounds.correct.playAsync();
@@ -94,6 +97,7 @@ export const Grid = (props:any) => {
             card2.revealed
         ] = Array(4).fill(true)
         resetRevealedCards()
+        updateCurrentStreak(interaction.currentStreak + 1)
     }
     const handleWin = ():void => {
         updateIsGameActive(false)
@@ -122,12 +126,30 @@ export const Grid = (props:any) => {
             return interaction
         }) 
     }
+    const updateBestStreak = (newStreak:number) => {
+        setInteraction(prevMoves => {
+            let interaction = {...prevMoves}
+            interaction.bestStreak = newStreak
+            return interaction
+        }) 
+    }
+    const updateCurrentStreak = (newStreak:number) => {
+        setInteraction(prevMoves => {
+            let interaction = {...prevMoves}
+            interaction.currentStreak = newStreak
+            return interaction
+        }) 
+        if(newStreak > interaction.bestStreak)
+            updateBestStreak(newStreak)
+    }
     return (
             <>
             <GridHead
                 navigation={props.navigation}
                 elpased={elpased}
                 moves={interaction.moves}
+                bestStreak={interaction.bestStreak}
+                currentStreak={interaction.currentStreak}
             />
             <View style={{       
                 backgroundColor: DEFAULT_BACKGROUND_COLOR,
@@ -142,6 +164,7 @@ export const Grid = (props:any) => {
             >
                 <WinModal 
                     level={level}
+                    cardsCount={cardsArr.length}
                     navigation={props.navigation}
                     moves={interaction.moves}
                     time={elpased}

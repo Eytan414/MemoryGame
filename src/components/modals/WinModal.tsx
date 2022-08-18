@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, Modal } from 'react-native';
+import { View, Text, Modal, Dimensions } from 'react-native';
 import {ShareButton} from '../../components/common/ShareButton';
+import { DESKTOP_MIN_WIDTH, MODAL_WIDTH_DESKTOP, MODAL_WIDTH_MOBILE } from '../../data/constants';
 import { GoHomeButton } from '../common/GoHomeButton';
+import { RestartButton } from '../GameGrid/grid/RestartButton';
 
 interface ModalProps{
     level: string,
+    cardsCount: number,
     navigation:any,
     moves:number,
     time:number,
@@ -12,6 +15,8 @@ interface ModalProps{
 }
 
 export const WinModal = (props: ModalProps) => {
+    const dims = Dimensions.get('window')
+    const isMobile:boolean = dims.width < DESKTOP_MIN_WIDTH
     return (
         <Modal
             animationType="slide"
@@ -38,7 +43,7 @@ export const WinModal = (props: ModalProps) => {
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
                     elevation: 5,
-                    maxWidth: '50%'    
+                    maxWidth: isMobile ? MODAL_WIDTH_MOBILE : MODAL_WIDTH_DESKTOP
                 }}>
                     <Text style={{
                         fontSize: 30,
@@ -58,6 +63,10 @@ export const WinModal = (props: ModalProps) => {
                         <GoHomeButton
                             navigation={props.navigation}
                         ></GoHomeButton>
+                        <RestartButton
+                            level={props.cardsCount}
+                            navigation={props.navigation}
+                        ></RestartButton>
                         <ShareButton
                             level={props.level}
                             time={props.time}

@@ -3,7 +3,10 @@ export const CardsCount:any = {
     INTERMEDIATE: 20,
     HARD: 24,
 }
-export const IMAGE_COUNT:number = 24
+export const MODAL_WIDTH_DESKTOP:string = '50%'
+export const MODAL_WIDTH_MOBILE:string = '90%'
+export const DESKTOP_MIN_WIDTH:number = 500
+export const IMAGE_COUNT:number = 24 //number of image assets
 export const CARD_DELAY_BEFORE_FLIP:number = 1000
 
 export const PAGE_GRID:string = 'Game'
