@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Dimensions, Pressable, Animated } from 'react-native';
 
 import { GameCard } from '../../../types';
@@ -20,6 +20,8 @@ interface CardProps {
     onPress(pressed: number): void,
     flipped: boolean
 }
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export const CardComponent = (props: CardProps) => {
 
     const dims = Dimensions.get('window')
@@ -33,30 +35,38 @@ export const CardComponent = (props: CardProps) => {
         - CARD_MARGIN_TOP
         - CARD_MARGIN_BOTTOM
 
+    const [showFront, setShowFront] = useState<boolean>(true)
+    const [showBack, setShowBack] = useState<boolean>(false)
     const card = props.cards.filter((card) => { return card.index === props.index })[0]
     const rotateAnim = useRef(new Animated.Value(props.flipped ? 0 : 1)).current
     const rotateY = rotateAnim.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '180deg']
     })
+    const toggleVisibility = ()=>{
+        setShowFront(prev => !prev)
+        setShowBack(prev => !prev)
+    }
     useEffect(() => {
         Animated.timing(
             rotateAnim, {
             toValue: props.flipped ? 0 : 1,
-            duration: 2000,
+            duration: 500,
             useNativeDriver: true
-        }
-        ).start()
+        }).start()
+        toggleVisibility()
+        
     }, [props.flipped])
+    
 
     return (
-        <Pressable
+        <AnimatedPressable
             disabled={card.disabled}
             onPress={() => { props.onPress(props.index) }}
             style={{
                 // ...styles.container,
                 height,
-                // transform: [  {perspective: 600}, { rotateY:rotateY } ],
+                transform: [ { rotateY } ],
                 width,
                 maxWidth: width,
                 maxHeight: height,
@@ -73,13 +83,13 @@ export const CardComponent = (props: CardProps) => {
             }}
         >
             <CardFace
-                show={card.revealed}
+                show={showFront}
                 imageUrl={card.imageUrl}
             />
             <CardBack
-                show={!card.revealed}
+                show={showBack}
             />
-        </Pressable>
+        </AnimatedPressable>
     )
 }
 const styles = StyleSheet.create({

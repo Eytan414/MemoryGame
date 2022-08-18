@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState} from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR } from '../../../data/constants';
 import { GameCard, Sounds } from '../../../types';
 import utilsService from "../../../utils/utils";
@@ -68,6 +68,7 @@ export const Grid = (props:any) => {
         if(pressedCard.revealed) return //case card "closed"
         
         pressedCard.revealed = !pressedCard.revealed
+        pressedCard.flipped = !pressedCard.flipped
         tmpRevealedCards.add(pressedCard)
         
         if(tmpRevealedCards.size === 1) { //case 1st card opened
@@ -113,16 +114,12 @@ export const Grid = (props:any) => {
         for (const card of cards){
             if(card.disabled) continue
             if(card.revealed){
-                // card.revealed = false
+                card.revealed = false
                 card.flipped = !card.flipped
-                // flipCard(card)
             }
         }
         setCardsArr(cards)
         setRevealedCards(new Set<GameCard>())
-    }
-    const flipCard = (card:GameCard) => {
-
     }
     const incrementMoves = () => {
         setInteraction(prevMoves => {

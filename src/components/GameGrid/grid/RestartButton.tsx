@@ -29,8 +29,6 @@ export const RestartButton = (props: ButtonProps) => {
             }}>
                 <Text style={{
                     fontSize: 16,
-                    lineHeight: 21,
-                    letterSpacing: 0.25,
                     color: 'white',
                     fontFamily: 'Helvetica'
                 }}>Restart</Text>

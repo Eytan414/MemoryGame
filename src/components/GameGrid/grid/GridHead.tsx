@@ -14,8 +14,9 @@ interface Props{
     navigation:any
 }
 export const GridHead = (props:Props) => {
-    let elpasedColor: string = props.elpased < 50 ? 'white' : 'red'
-
+    const elpasedColor: string = props.elpased < 50 ? 'white' : 'red'
+    const liveStats = `Moves: ${props.moves} | Streak: Active ${props.currentStreak} Best ${props.bestStreak}`
+    
     return (
         <View style={{
             height: GRID_HEAD_HEIGHT,
@@ -46,7 +47,7 @@ export const GridHead = (props:Props) => {
                 fontWeight: 'bold',
                 padding: 8
             }}>
-                {`Moves: ${props.moves} | Current streak: ${props.currentStreak} | Best streak: ${props.bestStreak}`}
+                {liveStats}
             </Text>
         </></View>
     )

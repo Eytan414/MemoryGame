@@ -18,6 +18,7 @@ export const CardBack = (props:CardBackProps) => {
             fontSize: 55,
             fontWeight: '900',
             transform: [{ rotateZ: "23deg" }],
+            backfaceVisibility: props.show ? "visible" : "hidden", 
             display: props.show ? "flex" : "none" 
         }}>
         ?</Text>

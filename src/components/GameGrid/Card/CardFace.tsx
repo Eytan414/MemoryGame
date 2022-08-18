@@ -14,7 +14,8 @@ export const CardFace = (props: CardProps) => {
                 height: '100%',
                 width: '100%',
                 resizeMode: 'contain',
-                // backfaceVisibility: props.show ? "visible" : "hidden", 
+                transform: [{ rotateY:'180deg' } ],
+                backfaceVisibility: props.show ? "visible" : "hidden", 
                 display: props.show ? "flex" : "none"
             }} />
     )
