@@ -46,9 +46,9 @@ export const WinModal = (props: ModalProps) => {
                     maxWidth: isMobile ? MODAL_WIDTH_MOBILE : MODAL_WIDTH_DESKTOP
                 }}>
                     <Text style={{
-                        fontSize: 30,
+                        fontSize: 24,
                         fontWeight: 'bold',
-                        color: 'blue',
+                        color: 'darkblue',
                         marginBottom: 25,
                         textAlign: 'center',
                     }}>
