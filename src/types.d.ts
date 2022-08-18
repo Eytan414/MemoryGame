@@ -4,7 +4,6 @@ export interface GameCard{
     imageUrl: any,
     revealed: boolean,
     disabled: boolean,
-    flipped: boolean,
 }
 export interface Sounds{
     win: any,

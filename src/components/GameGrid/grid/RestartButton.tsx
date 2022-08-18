@@ -28,8 +28,9 @@ export const RestartButton = (props: ButtonProps) => {
                 elevation: 3,
             }}>
                 <Text style={{
-                    fontSize: 16,
+                    fontSize: 18,
                     lineHeight: 21,
+                    fontWeight: 'bold',
                     letterSpacing: 0.25,
                     color: 'white',
                     fontFamily: 'Helvetica'

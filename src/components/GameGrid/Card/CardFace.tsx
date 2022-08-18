@@ -13,8 +13,7 @@ export const CardFace = (props: CardProps) => {
                 // ...styles.image,
                 height: '100%',
                 width: '100%',
-                resizeMode: 'contain',
-                // backfaceVisibility: props.show ? "visible" : "hidden", 
+                resizeMode: 'contain',                
                 display: props.show ? "flex" : "none"
             }} />
     )
