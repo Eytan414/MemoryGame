@@ -11,7 +11,7 @@ import {
     GRID_HEAD_HEIGHT,
     GRID_HEAD_PADDING_BOTTOM,
     GRID_HEAD_PADDING_TOP,
-    ROW_SIZE
+    ITEMS_IN_ROW
 } from '../../../data/constants';
 
 interface CardProps {
@@ -23,11 +23,10 @@ interface CardProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const CardComponent = (props: CardProps) => {
-
     const dims = Dimensions.get('window')
-    const width = dims.width / ROW_SIZE - CARD_MARGIN_SIDE
-
-    const rowCount: number = props.cards.length / ROW_SIZE
+    const width = dims.width / ITEMS_IN_ROW - CARD_MARGIN_SIDE
+    
+    const rowCount: number = props.cards.length / ITEMS_IN_ROW
     const availableHeight: number = dims.height
         - GRID_HEAD_HEIGHT
         - GRID_HEAD_PADDING_TOP //for extra spacing

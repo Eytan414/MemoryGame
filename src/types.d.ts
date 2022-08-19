@@ -16,6 +16,7 @@ export interface Records{
     easy: LevelStats,
     intermediate: LevelStats,
     hard: LevelStats,
+    expert: LevelStats,
 }
 export interface LevelStats{
     time: number,

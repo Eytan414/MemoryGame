@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { CardsCount, DEFAULT_BACKGROUND_COLOR, EMPTY_RECORD, Level} from '../../data/constants';
+import { CardsCount, DEFAULT_BACKGROUND_COLOR, EMPTY_RECORD, EMPTY_RECORDS, Level} from '../../data/constants';
 import { LevelStats, Records } from '../../types';
 import storage from '../../utils/storage';
 import { ChooseLevelButton } from './ChooseLevelButton';
 import { LevelRecords } from './LeveLRecords';
 
 export const Home = ({navigation}) => {
-    let allRecords:Records
+    let allRecords:Records = EMPTY_RECORDS
     const [easy, setEasy] = useState<LevelStats>(EMPTY_RECORD)
     const [intermediate, setIntermediate] = useState<LevelStats>(EMPTY_RECORD)
     const [hard, setHard] = useState<LevelStats>(EMPTY_RECORD)
-    useEffect(() => {
-        (async () => {
+    const [expert, setExpert] = useState<LevelStats>(EMPTY_RECORD)
+
+    useEffect(() => {//refresh records each navigation to home screen 
+        const unsubscribe = navigation.addListener('focus', async() => {
             allRecords = await storage.getRecords() as unknown as Records;
             setEasy(allRecords[Level.EASY])
             setIntermediate(allRecords[Level.INTERMEDIATE])
             setHard(allRecords[Level.HARD])
-        })()
-      }, [])    
+            setExpert(allRecords[Level.EXPERT])
+          });
+          return unsubscribe;       
+    }, [])    
+
+
     return (
         <View style={{
             backgroundColor: DEFAULT_BACKGROUND_COLOR,
@@ -59,6 +65,10 @@ export const Home = ({navigation}) => {
                         <ChooseLevelButton navigation={navigation} level={CardsCount.HARD} />
                         <LevelRecords stats={hard}></LevelRecords>
                     </View>
+                    {/* <View style={{}}>
+                        <ChooseLevelButton navigation={navigation} level={CardsCount.EXPERT} />
+                        <LevelRecords stats={expert}></LevelRecords>
+                    </View> */}
                 </View>
             </>}
         </View>

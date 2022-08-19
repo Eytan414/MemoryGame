@@ -31,6 +31,11 @@ export const ChooseLevelButton = (props: ButtonProps) => {
                 setTitle('Hard')
                 levelKey = Level.HARD
                 break
+            case CardsCount.EXPERT:
+                setColor('darkred')
+                setTitle('Expert')
+                levelKey = Level.EXPERT
+                break
         }
     },[])
     

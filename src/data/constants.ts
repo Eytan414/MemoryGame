@@ -3,12 +3,13 @@ export const CardsCount:any = {
     EASY: 16,
     INTERMEDIATE: 20,
     HARD: 24,
-    // EXPERT: 28, after adding more img assets
+    EXPERT: 32,
 }
 export const Level:any = {
     EASY: 'easy',
     INTERMEDIATE: 'intermediate',
-    HARD: 'hard'
+    HARD: 'hard',
+    EXPERT: 'expert',
 }
 export const MODAL_WIDTH_DESKTOP:string = '50%'
 export const MODAL_WIDTH_MOBILE:string = '90%'
@@ -26,7 +27,9 @@ export const GRID_HEAD_PADDING_BOTTOM:number = 30
 export const CARD_MARGIN_TOP:number = 8
 export const CARD_MARGIN_BOTTOM:number = 8
 export const CARD_MARGIN_SIDE:number = 4
-export const ROW_SIZE:number = 4 
+export const ITEMS_IN_ROW:number = 4 
+export const ITEMS_IN_HARD:number = 6 
+export const ITEMS_IN_EXPERT:number = 8 
 
 // Dark theme
 export const DEFAULT_BUTTON_COLOR:string = 'indigo'
@@ -46,5 +49,6 @@ export const EMPTY_RECORDS:Records = {
     easy: EMPTY_RECORD,
     intermediate: EMPTY_RECORD,
     hard: EMPTY_RECORD,
+    expert: EMPTY_RECORD,
 }
 

@@ -15,7 +15,11 @@ const checkWinCondition = (cards:Array<GameCard>):boolean =>{
     return true
 }
 
-export const Grid = (props:any) => {
+interface Props{
+    navigation:any,
+    route:any
+}
+export const Grid = (props:Props) => {
     const [modalVisible, setModalVisible] = useState<boolean>(false)    
     const [cardsArr, setCardsArr] = useState<Array<GameCard>>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -55,7 +59,8 @@ export const Grid = (props:any) => {
 
     const level = props.route.params.size === CardsCount.EASY ? Level.EASY
         : props.route.params.size === CardsCount.INTERMEDIATE ? Level.INTERMEDIATE
-        : Level.HARD
+        : props.route.params.size === CardsCount.HARD ? Level.HARD
+        : Level.EXPERT
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
