@@ -1,11 +1,12 @@
+import { DEFAULT_VOLUME } from '../data/constants';
 import { Sounds } from './../types.d';
 import { GameCard } from '../types';
 import { Audio } from 'expo-av';
-import {IMAGE_COUNT} from '../data/constants';
+import {CardsCount, IMAGE_COUNT, Level} from '../data/constants';
 import { Asset } from 'expo-asset';
 
 const utils = {
-	shuffle: (array: GameCard[]):void => {
+	shuffle: (array: GameCard[]) => {
 		let currentIndex:number = array.length
 		let randomIndex:number
 		
@@ -67,10 +68,10 @@ const utils = {
 				require('../../assets/sounds/click.wav'),
 				require('../../assets/sounds/correct.wav')
 		])
-		const win = await Audio.Sound.createAsync(winSrc)
-		const wrong = await Audio.Sound.createAsync(wrongSrc)
-		const click = await Audio.Sound.createAsync(clickSrc)
-		const correct = await Audio.Sound.createAsync(correctSrc)
+		const win = await Audio.Sound.createAsync(winSrc, {volume: DEFAULT_VOLUME})
+		const wrong = await Audio.Sound.createAsync(wrongSrc, {volume: DEFAULT_VOLUME})
+		const click = await Audio.Sound.createAsync(clickSrc, {volume: DEFAULT_VOLUME})
+		const correct = await Audio.Sound.createAsync(correctSrc, {volume: DEFAULT_VOLUME})
 		 
 		const sounds = {
 			win: win.sound,
@@ -89,6 +90,12 @@ const utils = {
 		try {
 		  await navigator.share(dataToShare);
 		} catch(err) {}
-	  }
+	},
+	getLevelName: (cardCount:number):string => {
+		return cardCount === CardsCount.EASY ? Level.EASY
+        : cardCount === CardsCount.INTERMEDIATE ? Level.INTERMEDIATE
+        : cardCount === CardsCount.HARD ? Level.HARD
+        : Level.EXPERT
+	}
 }
 export default utils

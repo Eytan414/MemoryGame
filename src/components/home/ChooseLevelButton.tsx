@@ -1,9 +1,6 @@
 import React, {useEffect, useState } from 'react';
 import { Text, Pressable } from 'react-native';
 import { CardsCount, Level, PAGE_GRID } from '../../data/constants';
-import { Records } from '../../types';
-import storage from '../../utils/storage';
-
 interface ButtonProps{
     level: number,
     navigation:any,
@@ -42,8 +39,7 @@ export const ChooseLevelButton = (props: ButtonProps) => {
     const pickLevel = ():void => {
         props.navigation.navigate(PAGE_GRID, {size: props.level})
 	}
-    const allrecords:Records = storage.getRecords() as unknown as Records
-    const levelRecords = allrecords[levelKey]
+    
     return (
         <Pressable
             onPress={()=>{ pickLevel() }}

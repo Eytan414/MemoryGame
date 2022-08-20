@@ -1,21 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import {GameButton} from "./GameButton";
+import {GameData} from "../../../types"
 import { GRID_HEAD_HEIGHT, 
         GRID_HEAD_PADDING_BOTTOM,
         GRID_HEAD_PADDING_TOP, 
         PAGE_HOME } from '../../../data/constants';
 
 interface Props{
-    elpased:number,
-    moves:number,
-    currentStreak:number,
-    bestStreak:number,
+    gameData: GameData,
     navigation:any
 }
 export const GridHead = (props:Props) => {
-    const elpasedColor: string = props.elpased < 50 ? 'white' : 'red'
-    const liveStats = `Moves: ${props.moves} | Streak: Active ${props.currentStreak} Best ${props.bestStreak}`
+    const {elpased, moves, currentStreak, bestStreak} = props.gameData
+    const elpasedColor: string = elpased < 50 ? 'white' : 'red'
+    const liveStats = `Moves: ${moves} | Streak: Active ${currentStreak} Best ${bestStreak}`
     
     return (
         <View style={{
@@ -34,7 +33,7 @@ export const GridHead = (props:Props) => {
                 fontWeight: 'bold',
                 padding: 8
             }}>
-                {props.elpased.toFixed(1)}
+                {elpased.toFixed(1)}
             </Text>
             <GameButton
                 navigation={props.navigation} 

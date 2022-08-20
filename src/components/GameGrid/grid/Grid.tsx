@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState} from 'react';
-import { View, StyleSheet } from 'react-native';
-import { CardsCount, CARD_DELAY_BEFORE_FLIP, DEFAULT_BACKGROUND_COLOR, Level } from '../../../data/constants';
+import { View } from 'react-native';
+import { CARD_DELAY_BEFORE_FLIP_BACK, DEFAULT_BACKGROUND_COLOR } from '../../../data/constants';
 import { GameCard, LevelStats, Records, Sounds } from '../../../types';
 import utils from "../../../utils/utils";
 import storage from "../../../utils/storage";
@@ -31,11 +31,12 @@ export const Grid = (props:Props) => {
             }
     )},[props.route.params.size])
     
-    const [interaction, setInteraction] = useState({
+    const [gameData, updateGameData] = useState({
         moves: 0,
         bestStreak: 0,
         currentStreak: 0,
-        gameActive: false
+        gameActive: false,
+        gameWon: false,
     })
     const [revealedCards, setRevealedCards] = useState<Set<GameCard>>(new Set<GameCard>())
     const [disableInteraction, setDisableInteraction] = useState<boolean>(false)
@@ -43,28 +44,31 @@ export const Grid = (props:Props) => {
 
     useEffect(()=>{
         const interval = setInterval(()=>{
-            if(interaction.gameActive)
+            if(gameData.gameActive)
                 setElpased(prevState => prevState + .1)
         }, 100)
         return () => clearInterval(interval)
-    },[interaction.gameActive])
+    },[gameData.gameActive])
+    
+    useEffect(()=>{
+        if(!gameData.gameWon) return
+        updateIsGameActive(false)
+        sounds.win.playAsync()
+        setModalVisible(true)
+        updateRecordIfNeeded()
+    },[gameData.gameWon])
 
     let sounds:Sounds;
     useMemo( async ()=>{
         return await utils.loadSounds()
     },[])
-    .then(calculateSounds =>{
-        sounds = calculateSounds
-    })
+    .then(calculateSounds => sounds = calculateSounds)
 
-    const level = props.route.params.size === CardsCount.EASY ? Level.EASY
-        : props.route.params.size === CardsCount.INTERMEDIATE ? Level.INTERMEDIATE
-        : props.route.params.size === CardsCount.HARD ? Level.HARD
-        : Level.EXPERT
+    const level = utils.getLevelName(props.route.params.size)
 
     const cardPressed = async (pressedCardIndex:number):Promise<void> =>{
         sounds.click.playAsync()
-        if(!interaction.gameActive) updateIsGameActive(true)
+        if(!gameData.gameActive) updateIsGameActive(true)
 
         let cards = [...cardsArr]
         let tmpRevealedCards = new Set<GameCard>(revealedCards)
@@ -87,9 +91,8 @@ export const Grid = (props:Props) => {
             handleMiss()            
             return
         } 
-        handleHit(pressedCard, matchingCard)
-
-        if(checkWinCondition(cards)) handleWin()
+        await handleHit(pressedCard, matchingCard)
+        if(checkWinCondition(cards)) setWinState()
     }
     const handleMiss = ():void => {
         setDisableInteraction(true)
@@ -97,37 +100,35 @@ export const Grid = (props:Props) => {
             sounds.wrong.playAsync()
             resetRevealedCards()
             setDisableInteraction(false)
-        }, CARD_DELAY_BEFORE_FLIP) 
+        }, CARD_DELAY_BEFORE_FLIP_BACK) 
         updateCurrentStreak(0)
     }
-    const handleHit = (card1:GameCard, card2:GameCard):void => {
-        sounds.correct.playAsync();
-        [   card1.disabled,
-            card2.disabled,
-            card1.revealed,
-            card2.revealed
-        ] = Array(4).fill(true)
+    const handleHit = async (card1:GameCard, card2:GameCard)=> {
+        card1.disabled = true
+        card2.disabled = true
+        card1.revealed = true
+        card2.revealed = true
         resetRevealedCards()
-        updateCurrentStreak(interaction.currentStreak + 1)
+        updateCurrentStreak(gameData.currentStreak + 1)
+        await sounds.correct.playAsync()
     }
-    const handleWin = ():void => {
-        updateIsGameActive(false)
-        sounds.win.playAsync()
-        setModalVisible(true)
-        updateRecordIfNeeded()
-    }
+    // const handleWin = ():void => {        updateIsGameActive(false)
+    //     sounds.win.playAsync()
+    //     setModalVisible(true)
+    //     updateRecordIfNeeded()
+    // }
     const updateRecordIfNeeded = async() => {
         const records:Records = await storage.getRecords() as unknown as Records
         const newRecord:LevelStats = {
             time: elpased < records[level].time ?
                   elpased.toFixed(1) 
                 : records[level].time,
-            moves: interaction.moves < records[level].moves ?
-                  interaction.moves 
+            moves: gameData.moves < records[level].moves ?
+                  gameData.moves 
                 : records[level].moves,
-            streak: interaction.bestStreak > records[level].streak ?
-                  interaction.bestStreak 
-                :records[level].streak
+            streak: gameData.bestStreak > records[level].streak ?
+                  gameData.bestStreak 
+                : records[level].streak
         }
         records[level] = newRecord        
         storage.updateRecords(records)
@@ -145,45 +146,50 @@ export const Grid = (props:Props) => {
         setRevealedCards(new Set<GameCard>())
     }
     const incrementMoves = () => {
-        setInteraction(prevMoves => {
-            let interaction = {...prevMoves}
-            interaction.moves += 1
-            return interaction
+        updateGameData(prevGameData => {
+            let gameData = {...prevGameData}
+            gameData.moves += 1
+            return gameData
         }) 
     }
     const updateIsGameActive = (gameActive:boolean) => {
-        setInteraction(prevMoves => {
-            let interaction = {...prevMoves}
-            interaction.gameActive = gameActive
-            return interaction
+        updateGameData(prevGameData => {
+            let gameData = {...prevGameData}
+            gameData.gameActive = gameActive
+            return gameData
+        }) 
+    }
+    const setWinState = (gameWon:boolean = true) => {
+        updateGameData(prevGameData => {
+            let gameData = {...prevGameData}
+            gameData.gameWon = gameWon
+            return gameData
         }) 
     }
     const updateBestStreak = (newStreak:number) => {
-        setInteraction(prevMoves => {
-            let interaction = {...prevMoves}
-            interaction.bestStreak = newStreak
-            return interaction
+        updateGameData(prevGameData => {
+            let gameData = {...prevGameData}
+            gameData.bestStreak = newStreak
+            return gameData
         }) 
     }
     const updateCurrentStreak = (newStreak:number) => {
-        setInteraction(prevMoves => {
-            let interaction = {...prevMoves}
-            interaction.currentStreak = newStreak
-            return interaction
+        updateGameData(prevGameData => {
+            let gameData = {...prevGameData}
+            gameData.currentStreak = newStreak
+            return gameData
         }) 
-        if(newStreak > interaction.bestStreak)
+        if(newStreak > gameData.bestStreak)
             updateBestStreak(newStreak)
     }
+    
     return (
-        loading ? <h1>loading</h1>
+        loading ? <h1>Loading...</h1>
         :
             <>
             <GridHead
                 navigation={props.navigation}
-                elpased={elpased}
-                moves={interaction.moves}
-                bestStreak={interaction.bestStreak}
-                currentStreak={interaction.currentStreak}
+                gameData={{elpased, ...gameData}}
             />
             <View style={{       
                 backgroundColor: DEFAULT_BACKGROUND_COLOR,
@@ -200,7 +206,7 @@ export const Grid = (props:Props) => {
                     level={level}
                     cardsCount={cardsArr?.length}
                     navigation={props.navigation}
-                    moves={interaction.moves}
+                    moves={gameData.moves}
                     time={elpased}
                     show={modalVisible}
                 />

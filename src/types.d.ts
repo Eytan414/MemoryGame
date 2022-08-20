@@ -23,3 +23,9 @@ export interface LevelStats{
     moves: number,
     streak: number,
 }
+export interface GameData{
+    elpased:number,
+    moves:number,
+    currentStreak:number,
+    bestStreak:number,
+}

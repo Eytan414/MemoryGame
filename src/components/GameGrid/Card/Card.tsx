@@ -8,8 +8,8 @@ import {
     CARD_MARGIN_BOTTOM,
     CARD_MARGIN_SIDE,
     CARD_MARGIN_TOP,
+    FLIP_ANIMATION_SPEED,
     GRID_HEAD_HEIGHT,
-    GRID_HEAD_PADDING_BOTTOM,
     GRID_HEAD_PADDING_TOP,
     ITEMS_IN_ROW
 } from '../../../data/constants';
@@ -50,7 +50,7 @@ export const CardComponent = (props: CardProps) => {
         Animated.timing(
             rotateAnim, {
             toValue: props.flipped ? 0 : 1,
-            duration: 500,
+            duration: FLIP_ANIMATION_SPEED,
             useNativeDriver: true
         }).start()
         toggleVisibility()
