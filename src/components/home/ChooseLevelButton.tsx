@@ -11,27 +11,40 @@ export const ChooseLevelButton = (props: ButtonProps) => {
     const [title, setTitle] = useState<string>('')
     let levelKey:string = ''
 
+    const setupEasy = () => {
+        setColor('green')
+        setTitle('Easy')
+        levelKey = Level.EASY
+    }
+    const setupIntermediate = () => {
+        setColor('darkorange')
+        setTitle('Intermediate')
+        levelKey = Level.INTERMEDIATE
+    }
+    const setupHard = () => {
+        setColor('orangered')
+        setTitle('Hard')
+        levelKey = Level.HARD
+    }
+    const setupInsane = () => {
+        setColor('darkred')
+        setTitle('Insane')
+        levelKey = Level.INSANE
+    }
+
     useEffect(()=>{
         switch(props.level){
             case CardsCount.EASY:
-                setColor('green')
-                setTitle('Easy')
-                levelKey = Level.EASY
+                setupEasy()
                 break
             case CardsCount.INTERMEDIATE:
-                setColor('darkorange')
-                setTitle('Intermediate')
-                levelKey = Level.INTERMEDIATE
+                setupIntermediate()
                 break
             case CardsCount.HARD:
-                setColor('orangered')
-                setTitle('Hard')
-                levelKey = Level.HARD
+                setupHard()                
                 break
-            case CardsCount.EXPERT:
-                setColor('darkred')
-                setTitle('Expert')
-                levelKey = Level.EXPERT
+            case CardsCount.INSANE:
+                setupInsane()
                 break
         }
     },[])

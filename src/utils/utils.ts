@@ -11,11 +11,11 @@ const utils = {
 		let randomIndex:number
 		
 		while (currentIndex !== 0) {
-		randomIndex = Math.floor(Math.random() * currentIndex)
-		currentIndex--
+			randomIndex = Math.floor(Math.random() * currentIndex)
+			currentIndex--
 
-		[array[currentIndex], array[randomIndex]] = 
-			[array[randomIndex], array[currentIndex]]
+			[array[currentIndex], array[randomIndex]] = 
+				[array[randomIndex], array[currentIndex]]
 		}
 	},
 	generateData: async (size:number):Promise<Array<GameCard>> => {
@@ -56,7 +56,7 @@ const utils = {
 	loadImages: async () => {
 		const imagesObj = {}
 		for (let i = 0; i<IMAGE_COUNT; i++)
-			imagesObj[i] = await require(`../../assets/images/cardfaces/${i}.svg`) as string
+			imagesObj[i] = await require(`../../assets/images/cardfaces/${i}.png`) as string
 		
 		return imagesObj
 	},
@@ -95,7 +95,7 @@ const utils = {
 		return cardCount === CardsCount.EASY ? Level.EASY
         : cardCount === CardsCount.INTERMEDIATE ? Level.INTERMEDIATE
         : cardCount === CardsCount.HARD ? Level.HARD
-        : Level.EXPERT
+        : Level.INSANE
 	}
 }
 export default utils

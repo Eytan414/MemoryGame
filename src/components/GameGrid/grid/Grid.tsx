@@ -55,10 +55,10 @@ export const Grid = (props:Props) => {
         updateIsGameActive(false)
         sounds.win.playAsync()
         setModalVisible(true)
-        updateRecordIfNeeded()
+        updateRecordsIfNeeded()
     },[gameData.gameWon])
 
-    let sounds:Sounds;
+    let sounds:Sounds
     useMemo( async ()=>{
         return await utils.loadSounds()
     },[])
@@ -81,16 +81,14 @@ export const Grid = (props:Props) => {
         pressedCard.flipped = !pressedCard.flipped
         tmpRevealedCards.add(pressedCard)
         
-        if(tmpRevealedCards.size === 1) { //case 1st card opened
-            setRevealedCards(tmpRevealedCards)
-            return
-        }
+        if(tmpRevealedCards.size === 1) //case 1st card opened=
+            return setRevealedCards(tmpRevealedCards)
+        
         incrementMoves()
 
-        if(!matchingCard.revealed){//case 2nd card opened
-            handleMiss()            
-            return
-        } 
+        if(!matchingCard.revealed)//case 2nd card opened
+            return handleMiss() 
+        
         await handleHit(pressedCard, matchingCard)
         if(checkWinCondition(cards)) setWinState()
     }
@@ -112,12 +110,7 @@ export const Grid = (props:Props) => {
         updateCurrentStreak(gameData.currentStreak + 1)
         await sounds.correct.playAsync()
     }
-    // const handleWin = ():void => {        updateIsGameActive(false)
-    //     sounds.win.playAsync()
-    //     setModalVisible(true)
-    //     updateRecordIfNeeded()
-    // }
-    const updateRecordIfNeeded = async() => {
+    const updateRecordsIfNeeded = async() => {
         const records:Records = await storage.getRecords() as unknown as Records
         const newRecord:LevelStats = {
             time: elpased < records[level].time ?
@@ -197,7 +190,7 @@ export const Grid = (props:Props) => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                maxWidth: '85%',
+                maxWidth: '90%',
                 alignSelf: 'center'
             }}
                 pointerEvents={disableInteraction ? "none" : "auto"} 

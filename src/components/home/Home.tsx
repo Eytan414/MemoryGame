@@ -11,7 +11,7 @@ export const Home = ({navigation}) => {
     const [easy, setEasy] = useState<LevelStats>(EMPTY_RECORD)
     const [intermediate, setIntermediate] = useState<LevelStats>(EMPTY_RECORD)
     const [hard, setHard] = useState<LevelStats>(EMPTY_RECORD)
-    const [expert, setExpert] = useState<LevelStats>(EMPTY_RECORD)
+    const [insane, setInsane] = useState<LevelStats>(EMPTY_RECORD)
 
     useEffect(() => {//refresh records each navigation to home screen 
         const unsubscribe = navigation.addListener('focus', async() => {
@@ -19,7 +19,7 @@ export const Home = ({navigation}) => {
             setEasy(allRecords[Level.EASY])
             setIntermediate(allRecords[Level.INTERMEDIATE])
             setHard(allRecords[Level.HARD])
-            setExpert(allRecords[Level.EXPERT])
+            setInsane(allRecords[Level.INSANE])
           });
           return unsubscribe;       
     }, [])    
@@ -65,10 +65,10 @@ export const Home = ({navigation}) => {
                         <ChooseLevelButton navigation={navigation} level={CardsCount.HARD} />
                         <LevelRecords stats={hard}></LevelRecords>
                     </View>
-                    {/* <View style={{}}>
-                        <ChooseLevelButton navigation={navigation} level={CardsCount.EXPERT} />
-                        <LevelRecords stats={expert}></LevelRecords>
-                    </View> */}
+                    <View style={{}}>
+                        <ChooseLevelButton navigation={navigation} level={CardsCount.INSANE} />
+                        <LevelRecords stats={insane}></LevelRecords>
+                    </View>
                 </View>
             </>}
         </View>

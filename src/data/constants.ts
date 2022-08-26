@@ -1,17 +1,17 @@
 import { Records, LevelStats } from './../types.d';
 export const CardsCount:any = {
-    EASY: 4,
+    EASY: 16,
     INTERMEDIATE: 20,
     HARD: 24,
-    EXPERT: 32,
+    INSANE: 32,
 }
 export const Level:any = {
     EASY: 'easy',
     INTERMEDIATE: 'intermediate',
     HARD: 'hard',
-    EXPERT: 'expert',
+    INSANE: 'insane',
 }
-export const IMAGE_COUNT:number = 24 //number of image assets
+export const IMAGE_COUNT:number = 41 //number of image assets
 /* Game settings */
 export const CARD_DELAY_BEFORE_FLIP_BACK:number = 1800
 export const FLIP_ANIMATION_SPEED:number = 1000
@@ -31,9 +31,10 @@ export const GRID_HEAD_PADDING_BOTTOM:number = 30
 export const CARD_MARGIN_TOP:number = 8
 export const CARD_MARGIN_BOTTOM:number = 8
 export const CARD_MARGIN_SIDE:number = 4
-export const ITEMS_IN_ROW:number = 4 
-export const ITEMS_IN_HARD:number = 6 
-export const ITEMS_IN_EXPERT:number = 8 
+export const ITEMS_IN_EASY_ROW:number = 4 
+export const ITEMS_IN_INTERMEDIATE_ROW:number = 5
+export const ITEMS_IN_HARD_ROW:number = 6 
+export const ITEMS_IN_INSANE_ROW:number = 8 
 
 // Dark theme
 export const DEFAULT_BUTTON_COLOR:string = 'indigo'
@@ -53,6 +54,6 @@ export const EMPTY_RECORDS:Records = {
     easy: EMPTY_RECORD,
     intermediate: EMPTY_RECORD,
     hard: EMPTY_RECORD,
-    expert: EMPTY_RECORD,
+    insane: EMPTY_RECORD,
 }
 
