@@ -19,10 +19,10 @@ export const ShareButton = (props: Props) => {
         <Pressable onPress={shareScore}
              style={{
                 backgroundColor: 'lightsteelblue',
-                borderRadius: 20,
+                paddingVertical: 12,
                 paddingHorizontal: 16,
-                paddingVertical: 8,
-                elevation: 2,
+                borderRadius: 55,
+                elevation: 3,
             }}
         >
             <Text style={{

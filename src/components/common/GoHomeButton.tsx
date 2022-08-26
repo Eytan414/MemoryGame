@@ -12,10 +12,10 @@ export const GoHomeButton = (props: Props) => {
         <Pressable
         style={{
             backgroundColor: 'saddlebrown',
-            borderRadius: 20,
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            elevation: 2,
+            paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderRadius: 55,
+                elevation: 3,
         }}
         onPress={() => props.navigation.navigate(PAGE_HOME)}
         >

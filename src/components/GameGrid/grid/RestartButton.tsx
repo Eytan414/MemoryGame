@@ -23,9 +23,9 @@ export const RestartButton = (props: ButtonProps) => {
                 justifyContent: 'center',
                 paddingVertical: 12,
                 paddingHorizontal: 16,
-                marginHorizontal: 8,
                 borderRadius: 55,
                 elevation: 3,
+                marginHorizontal: 8,
             }}>
                 <Text style={{
                     fontSize: 16,
